@@ -18,24 +18,23 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="txtName" Grid.Column="0" Margin="5" Text="Welcome First Last!" TextWrapping="Wrap" FontSize="29.333"/>
+                    <TextBlock x:Name="txtName" Grid.Column="0" Margin="5" Text="Welcome First Last!" TextWrapping="Wrap" FontSize="24"/>
                     <Button Grid.Column="1" Margin="5" HorizontalAlignment="Right" Click="Logoff_Click">
                         <TextBlock Text="Log off" FontSize="24"/>
+                    </Button>
+                    <Button Grid.Column="2" Margin="5" HorizontalAlignment="Right" Click="ChangePassword_Click">
+                        <TextBlock Text="Change Password" FontSize="24"/>
                     </Button>
                 </Grid>
             </Grid>
 
             <Grid Grid.Row="1">
                 <!-- CONTENT -->
-                
-                <!-- TODO: Exercise 3: Task 2b: Connect the LogonFailed event of the logonPage view to the Logon_Failed method in MainWindow.xaml.cs -->
                 <y:LogonPage x:Name="logonPage" LogonSuccess="Logon_Success" LogonFailed="Logon_Failed" Visibility="Collapsed" />
-
-
                 <y:StudentsPage x:Name="studentsPage" StudentSelected="studentsPage_StudentSelected" Visibility="Collapsed" />
                 <y:StudentProfile x:Name="studentProfile" Back="studentPage_Back" Visibility="Collapsed" />
-                
                 <!-- CONTENT -->
             </Grid>
         </Grid>

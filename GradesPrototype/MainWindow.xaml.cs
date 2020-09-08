@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GradesPrototype.Controls;
 using GradesPrototype.Data;
 using GradesPrototype.Services;
 using GradesPrototype.Views;
@@ -28,6 +29,7 @@ namespace GradesPrototype
         {
             InitializeComponent();
             DataSource.CreateData();
+            DataSource.Students.Sort();
             GotoLogon();
         }
 
@@ -35,7 +37,7 @@ namespace GradesPrototype
         // Display the logon view
         public void GotoLogon()
         {
-            // Display the logon view and hide the list of students and single student page
+            // Display the logon view and hide the list of students and single student view
             logonPage.Visibility = Visibility.Visible;
             studentsPage.Visibility = Visibility.Collapsed;
             studentProfile.Visibility = Visibility.Collapsed;
@@ -58,7 +60,7 @@ namespace GradesPrototype
             // Hide the list of students
             studentsPage.Visibility = Visibility.Collapsed;
 
-            // Display the page for a single student
+            // Display the view for a single student
             studentProfile.Visibility = Visibility.Visible;
             studentProfile.Refresh();
         }
@@ -75,14 +77,12 @@ namespace GradesPrototype
             Refresh();
         }
 
-        // TODO: Exercise 3: Task 2a: Handle logon failure
-        // Display an error message. The user must try again
-        private void Logon_Failed( object sender, EventArgs e )
+        // Handle logon failure
+        private void Logon_Failed(object sender, EventArgs e)
         {
             // Display an error message. The user must try again
-            MessageBox.Show( "Invalid Username or Password", "Logon Failed", MessageBoxButton.OK, MessageBoxImage.Error );
+            MessageBox.Show("Invalid Username or Password", "Logon Failed", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
 
         // Handle logoff
         private void Logoff_Click(object sender, RoutedEventArgs e)
@@ -94,6 +94,21 @@ namespace GradesPrototype
             logonPage.Visibility = Visibility.Visible;
         }
 
+        // Handle change password request
+        private void ChangePassword_Click(object sender, EventArgs e)
+        {
+            // Use the ChangePasswordDialog to change the user's password
+            ChangePasswordDialog cpd = new ChangePasswordDialog();
+
+            // Display the dialog
+            if (cpd.ShowDialog().Value)
+            {
+                // When the user closes the dialog by using the OK button, the password should have been changed
+                // Display a message to confirm
+                MessageBox.Show("Password changed", "Password", MessageBoxButton.OK, MessageBoxImage.Information);
+            }            
+        }
+
         // Handle the Back button on the Student view
         private void studentPage_Back(object sender, EventArgs e)
         {
@@ -103,13 +118,9 @@ namespace GradesPrototype
         // Handle the StudentSelected event when the user clicks a student on the Students view
         private void studentsPage_StudentSelected(object sender, StudentEventArgs e)
         {
-            // TODO: Exercise 3: Task 3c: Set the current student in the global context to the student specified in the StudentEventArgs parameter
             SessionContext.CurrentStudent = e.Child;
-
-            // Display the details of the current student
             GotoStudentProfile();
         }
-
         #endregion
 
         #region Display Logic
@@ -120,16 +131,16 @@ namespace GradesPrototype
             switch (SessionContext.UserRole)
             {
                 case Role.Student:
-                    // TODO: Exercise 3: Task 2c: Display the student name in the banner at the top of the page
-                    txtName.Text = string.Format( "Welcome {0} {1}", SessionContext.CurrentStudent.FirstName, SessionContext.CurrentStudent.LastName );
+                    // Display the student name in the banner at the top of the page
+                    txtName.Text = string.Format("Welcome {0} {1}", SessionContext.CurrentStudent.FirstName, SessionContext.CurrentStudent.LastName);
 
                     // Display the details for the current student
                     GotoStudentProfile();
                     break;
 
                 case Role.Teacher:
-                    // TODO: Exercise 3: Task 2d: Display the teacher name in the banner at the top of the page
-                    txtName.Text = string.Format( "Welcome {0} {1}", SessionContext.CurrentTeacher.FirstName, SessionContext.CurrentTeacher.LastName );
+                    // Display the teacher name in the banner at the top of the page
+                    txtName.Text = string.Format("Welcome {0} {1}", SessionContext.CurrentTeacher.FirstName, SessionContext.CurrentTeacher.LastName);
 
                     // Display the list of students for the teacher
                     GotoStudentsPage();                    

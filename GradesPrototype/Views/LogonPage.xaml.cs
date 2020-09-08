@@ -29,63 +29,59 @@ namespace GradesPrototype.Views
 
         #region Event Members
         public event EventHandler LogonSuccess;
-
-        // TODO: Exercise 3: Task 1a: Define LogonFailed event
         public event EventHandler LogonFailed;
-
-
         #endregion
 
         #region Logon Validation
 
-        // TODO: Exercise 3: Task 1b: Validate the username and password against the Users collection in the MainWindow window
+        // Validate the username and password against the Users collection in the MainWindow window
         private void Logon_Click(object sender, RoutedEventArgs e)
         {
-            // Find the user in the list of possible users - first check whether the user is a  teacher
+            // Find the user in the list of possible users - first check whether the user is a Teacher
             var teacher = (from Teacher t in DataSource.Teachers
-                           where String.Compare( t.UserName, username.Text ) == 0 &&
-                                 String.Compare( t.Password, password.Password ) == 0
+                           where String.Compare(t.UserName, username.Text) == 0
+                           && t.VerifyPassword(password.Password)
                            select t).FirstOrDefault();
 
             // If the UserName of the user retrieved by using LINQ is non-empty then the user is a teacher
-            if ( !String.IsNullOrEmpty( teacher.UserName ) )
+            if (teacher != null && !String.IsNullOrEmpty(teacher.UserName))
             {
                 // Save the UserID and Role (teacher or student) and UserName in the global context
                 SessionContext.UserID = teacher.TeacherID;
                 SessionContext.UserRole = Role.Teacher;
                 SessionContext.UserName = teacher.UserName;
-                SessionContext.CurrentTeacher = teacher;
-
+                SessionContext.CurrentTeacher = teacher; 
+              
                 // Raise the LogonSuccess event and finish
-                LogonSuccess( this, null );
+                LogonSuccess(this, null);
                 return;
             }
             // If the user is not a teacher, check whether the username and password match those of a student
             else
             {
                 var student = (from Student s in DataSource.Students
-                               where String.Compare( s.UserName, username.Text ) == 0 &&
-                                     String.Compare( s.Password, password.Password ) == 0
+                               where String.Compare(s.UserName, username.Text) == 0
+                               && s.VerifyPassword(password.Password)
                                select s).FirstOrDefault();
 
                 // If the UserName of the user retrieved by using LINQ is non-empty then the user is a student
-                if ( !String.IsNullOrEmpty( student.UserName ) )
+                if (student != null && !String.IsNullOrEmpty(student.UserName))
                 {
                     // Save the details of the student in the global context
                     SessionContext.UserID = student.StudentID;
                     SessionContext.UserRole = Role.Student;
                     SessionContext.UserName = student.UserName;
-                    SessionContext.CurrentStudent = student;
-
+                    SessionContext.CurrentStudent = student; 
+                    
                     // Raise the LogonSuccess event and finish
-                    LogonSuccess( this, null );
+                    LogonSuccess(this, null);
                     return;
                 }
             }
 
             // If the credentials do not match those for a Teacher or for a Student then they must be invalid
             // Raise the LogonFailed event
-            LogonFailed( this, null );
+            LogonFailed(this, null);
         }
         #endregion
     }
